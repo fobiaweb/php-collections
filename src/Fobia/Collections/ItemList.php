@@ -49,7 +49,7 @@ class ItemList implements \IteratorAggregate, \Countable
      */
     public function __construct(array $data = array())
     {
-        $this->_d = $data;
+        $this->copyFrom($data);
     }
 
     /**
@@ -132,8 +132,9 @@ class ItemList implements \IteratorAggregate, \Countable
     }
 
     /**
-     * Удаляет элемент из списка. Список сначала будет искать пункта.
-     * Первый пункт найдено будут удалены из списка.
+     * Удаляет элемент из списка.
+     * Список будет искать сначала пункта.
+     * Первый пункт найденого будут удален из списка.
      *
      * @param  mixed $item the item to be removed.
      * @return integer значение индекса на уровне которой элемент будет удалено
@@ -197,9 +198,9 @@ class ItemList implements \IteratorAggregate, \Countable
      * @param mixed $item the item
      * @return integer the index of the item in the list (0 based), -1 if not found.
      */
-    public function indexOf($item)
+    public function indexOf($item, $strict = true)
     {
-        if (($index = array_search($item, $this->_d, true)) !== false) {
+        if (($index = array_search($item, $this->_d, $strict)) !== false) {
             return $index;
         } else {
             return -1;
@@ -220,7 +221,7 @@ class ItemList implements \IteratorAggregate, \Countable
      * Примечание, существующие данные в списке будут удалены в первую очередь.
      *
      * @param mixed $data the data to be copied from, must be an array or object implementing Traversable
-     * @throws CException Если данные не является ни массивом, ни Traversable.
+     * @throws \Exception Если данные не является ни массивом, ни Traversable.
      */
     public function copyFrom($data)
     {
@@ -237,9 +238,11 @@ class ItemList implements \IteratorAggregate, \Countable
     }
 
     /**
-     * Объединяет Iterable данные в карте. Новые данные будут добавлены в конец существующих данных.
+     * Объединяет Iterable данные в карте.
+     * Новые данные будут добавлены в конец существующих данных.
+     * 
      * @param mixed $data the data to be merged with, must be an array or object implementing Traversable
-     * @throws CException Если данные не является ни массивом, ни итератор.
+     * @throws \Exception Если данные не является ни массивом, ни итератор.
      */
     public function mergeWith($data)
     {

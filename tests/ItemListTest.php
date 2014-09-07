@@ -32,7 +32,7 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
      * @param bool $create_obj
      * @return array
      */
-    public function createListItems($count = null, $create_obj = false)
+    public function createArrayItems($count = null, $create_obj = false)
     {
         $groups = 5;
         if ($count === null) {
@@ -62,21 +62,6 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
         return $data;
     }
 
-    /**
-     *
-     * @param int $count
-     * @return \Fobia\ObjectCollection
-     */
-    protected function createObjectCollection($count = 1)
-    {
-        $objectCollection = new ObjectCollection();
-
-        for ($index = 0; $index < $count; $index ++ ) {
-            $objectCollection->addAt(new Item("name_$index", $index));
-        }
-        return $objectCollection;
-    }
-
     protected function setErrorHandler($errno_level = 256)
     {
         $this->handler_error_level = error_reporting(0);
@@ -90,75 +75,60 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
 
     protected function restoreErrorHandler()
     {
-        restore_error_handler();
-        error_reporting($this->handler_error_level);
-        $this->handler_error_level = null;
+        if ($this->handler_error_level !== null) {
+            restore_error_handler();
+            error_reporting($this->handler_error_level);
+            $this->handler_error_level = null;
+        }
     }
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
     protected function setUp()
     {
-        $this->object = new ItemList;
+        $this->object = new ItemList($this->createArrayItems());
     }
 
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
     protected function tearDown()
     {
-
+        $this->restoreErrorHandler();
     }
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * @covers Fobia\Collections\ItemList::getIterator
-     * @todo   Implement testGetIterator().
      */
     public function testGetIterator()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->assertInstanceOf('Traversable', $this->object);
+        $this->assertInstanceOf('Traversable', $this->object->getIterator());
     }
 
     /**
      * @covers Fobia\Collections\ItemList::count
-     * @todo   Implement testCount().
      */
     public function testCount()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->assertCount(self::DEFAULT_COUNT, $this->object);
     }
 
     /**
      * @covers Fobia\Collections\ItemList::getCount
-     * @todo   Implement testGetCount().
      */
     public function testGetCount()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->assertEquals(10, $this->object->getCount());
     }
 
     /**
      * @covers Fobia\Collections\ItemList::itemAt
-     * @todo   Implement testItemAt().
      */
     public function testItemAt()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $item = $this->object->itemAt(1);
+
+        $this->assertArrayHasKey('id', $item);
+        $this->assertArrayHasKey('name', $item);
+        $this->assertEquals(1, $item['id']);
+        $this->assertEquals('name_1', $item['name']);
     }
 
     /**
@@ -167,22 +137,29 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
      */
     public function testAdd()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $index = $this->object->add(array(
+            'id' => 10,
+            'name' => 'name_10',
+            'type' => 'add'
+        ));
+
+        $this->assertEquals(self::DEFAULT_COUNT, $index);
     }
 
     /**
      * @covers Fobia\Collections\ItemList::insertAt
-     * @todo   Implement testInsertAt().
      */
     public function testInsertAt()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
+        $item = array(
+            'id' => 10,
+            'name' => 'name_10',
+            'type' => 'add'
         );
+        $this->object->insertAt(1, $item);
+
+        $this->assertCount(self::DEFAULT_COUNT + 1, $this->object);
+        $this->assertSame($item, $this->object->itemAt(1));
     }
 
     /**
@@ -191,10 +168,14 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
      */
     public function testRemove()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
+        $item = array(
+            'id' => 10,
+            'name' => 'name_10',
+            'type' => 'add'
         );
+        $this->object->insertAt(1, $item);
+        $index = $this->object->remove($item);
+        $this->assertEquals(1, $index);
     }
 
     /**
@@ -203,22 +184,24 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
      */
     public function testRemoveAt()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $item0 = $this->object->itemAt(0);
+        $this->assertEquals('name_0', $item0['name']);
+
+        $item = $this->object->removeAt(0);
+        $this->assertCount(self::DEFAULT_COUNT - 1, $this->object);
+        $this->assertSame($item0, $item);
+
+        $item = $this->object->itemAt(0);
+        $this->assertEquals('name_1', $item['name']);
     }
 
     /**
      * @covers Fobia\Collections\ItemList::clear
-     * @todo   Implement testClear().
      */
     public function testClear()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->object->clear();
+        $this->assertCount(0, $this->object);
     }
 
     /**
@@ -227,10 +210,14 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
      */
     public function testContains()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
+        $item = array(
+            'id' => 10,
+            'name' => 'name_10',
+            'type' => 'add'
         );
+        $this->assertFalse($this->object->contains($item));
+        $this->object->add($item);
+        $this->assertTrue($this->object->contains($item));
     }
 
     /**
@@ -239,10 +226,15 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
      */
     public function testIndexOf()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
+        $item_new = array(
+            'id' => 11,
+            'name' => 'name_11',
+            'type' => 'add'
         );
+        $index = $this->object->add($item_new);
+
+        $item = $this->object->itemAt($index);
+        $this->assertSame($item_new, $item);
     }
 
     /**
@@ -251,10 +243,12 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
      */
     public function testToArray()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $arr = $this->object->toArray();
+        $this->assertInternalType('array', $arr);
+
+        foreach ($this->object as $k => $v) {
+            $this->assertSame($arr[$k], $v);
+        }
     }
 
     /**
@@ -264,9 +258,14 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
     public function testCopyFrom()
     {
         // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->assertCount(self::DEFAULT_COUNT, $this->object);
+
+        $data = $this->createArrayItems(5);
+        foreach ($data as $k => $v) {
+            $data[$k]['type'] = 'test';
+        }
+        $this->object->copyFrom($data);
+        $this->assertCount(5, $this->object);
     }
 
     /**
@@ -275,9 +274,15 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
      */
     public function testMergeWith()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
+        $arr = $this->createArrayItems(5);
+        $arr[] = array(
+            'id' => 22,
+            'name' => 'name_22',
+            'type' => 'merge'
         );
+        $this->object->mergeWith($arr);
+
+        $this->assertCount(self::DEFAULT_COUNT + 5 + 1, $this->object);
+        //$this->assertSame($arr, $this->object->itemAt($this->object->getCount() - 1));
     }
 }
