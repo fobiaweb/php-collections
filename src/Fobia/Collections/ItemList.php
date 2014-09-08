@@ -96,7 +96,7 @@ class ItemList implements \IteratorAggregate, \Countable
         if (isset($this->_d[$index])) {
             return $this->_d[$index];
         } else {
-            throw new \Exception("List index \"{$index}\" is out of bound.");
+            throw new \Exception("Индекс списка \"{$index}\" вне границы.");
         }
     }
 
@@ -127,7 +127,7 @@ class ItemList implements \IteratorAggregate, \Countable
             array_splice($this->_d, $index, 0, array($item));
             $this->_c ++;
         } else {
-            throw new \Exception("List index \"{$index}\" is out of bound.");
+            throw new \Exception("Индекс списка \"{$index}\" вне границы.");
         }
     }
 
@@ -137,7 +137,7 @@ class ItemList implements \IteratorAggregate, \Countable
      * Первый пункт найденого будут удален из списка.
      *
      * @param  mixed $item the item to be removed.
-     * @return integer значение индекса на уровне которой элемент будет удалено
+     * @return integer значение индекса на уровне которой элемент будет удален.
      * @throws \Exception Если элемент не существует
      */
     public function remove($item)
@@ -169,7 +169,7 @@ class ItemList implements \IteratorAggregate, \Countable
                 return $item;
             }
         } else {
-            throw new \Exception("List index \"{$index}\" is out of bound.");
+            throw new \Exception("Индекс списка \"{$index}\" вне границы.");
         }
     }
 
@@ -180,9 +180,12 @@ class ItemList implements \IteratorAggregate, \Countable
      */
     public function clear()
     {
-        for ($i = $this->_c - 1; $i >= 0; -- $i) {
-            $this->removeAt($i);
-        }
+        $this->_d = array();
+        $this->_c = 0;
+
+        //for ($i = $this->_c - 1; $i >= 0; -- $i) {
+        //    $this->removeAt($i);
+        //}
     }
 
     /**
@@ -233,14 +236,14 @@ class ItemList implements \IteratorAggregate, \Countable
                 $this->add($item);
             }
         } elseif ($data !== null) {
-            throw new \Exception("List data must be an array or an object implementing Traversable.");
+            throw new \Exception("Список данных должен быть массивом или объектом, реализующим Traversable.");
         }
     }
 
     /**
      * Объединяет Iterable данные в карте.
      * Новые данные будут добавлены в конец существующих данных.
-     * 
+     *
      * @param mixed $data the data to be merged with, must be an array or object implementing Traversable
      * @throws \Exception Если данные не является ни массивом, ни итератор.
      */
@@ -251,7 +254,7 @@ class ItemList implements \IteratorAggregate, \Countable
                 $this->add($item);
             }
         } elseif ($data !== null) {
-            throw new \Exception("List data must be an array or an object implementing Traversable.");
+            throw new \Exception("Список данных должен быть массивом или объектом, реализующим Traversable.");
         }
     }
 }
