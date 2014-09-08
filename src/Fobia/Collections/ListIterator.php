@@ -37,6 +37,7 @@ class ListIterator implements \Iterator
 
     /**
      * Constructor.
+     *
      * @param array $data the data to be iterated through
      */
     public function __construct(&$data)
@@ -58,6 +59,7 @@ class ListIterator implements \Iterator
     /**
      * Returns the key of the current array item.
      * This method is required by the interface Iterator.
+     *
      * @return integer the key of the current array item
      */
     public function key()
@@ -68,6 +70,7 @@ class ListIterator implements \Iterator
     /**
      * Returns the current array item.
      * This method is required by the interface Iterator.
+     *
      * @return mixed the current array item
      */
     public function current()
@@ -87,6 +90,7 @@ class ListIterator implements \Iterator
     /**
      * Returns whether there is an item at current position.
      * This method is required by the interface Iterator.
+     *
      * @return boolean
      */
     public function valid()

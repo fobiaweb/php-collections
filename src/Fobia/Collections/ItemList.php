@@ -36,7 +36,7 @@ namespace Fobia\Collections;
 class ItemList implements \IteratorAggregate, \Countable
 {
 
-    private $_d = array();
+    protected $data = array();
     private $_c = 0;
 
     /**
@@ -60,7 +60,7 @@ class ItemList implements \IteratorAggregate, \Countable
      */
     public function getIterator()
     {
-        return new ListIterator($this->_d);
+        return new ListIterator($this->data);
     }
 
     /**
@@ -93,8 +93,8 @@ class ItemList implements \IteratorAggregate, \Countable
      */
     public function itemAt($index)
     {
-        if (isset($this->_d[$index])) {
-            return $this->_d[$index];
+        if (isset($this->data[$index])) {
+            return $this->data[$index];
         } else {
             throw new \Exception("Индекс списка \"{$index}\" вне границы.");
         }
@@ -102,6 +102,7 @@ class ItemList implements \IteratorAggregate, \Countable
 
     /**
      * Добавляет элемент в конец списка.
+     *
      * @param mixed $item new item
      * @return integer the zero-based index at which the item is added
      */
@@ -122,9 +123,9 @@ class ItemList implements \IteratorAggregate, \Countable
     public function insertAt($index, $item)
     {
         if ($index === $this->_c) {
-            $this->_d[$this->_c ++] = $item;
+            $this->data[$this->_c ++] = $item;
         } elseif ($index >= 0 && $index < $this->_c) {
-            array_splice($this->_d, $index, 0, array($item));
+            array_splice($this->data, $index, 0, array($item));
             $this->_c ++;
         } else {
             throw new \Exception("Индекс списка \"{$index}\" вне границы.");
@@ -162,10 +163,10 @@ class ItemList implements \IteratorAggregate, \Countable
         if ($index >= 0 && $index < $this->_c) {
             $this->_c --;
             if ($index === $this->_c) {
-                return array_pop($this->_d);
+                return array_pop($this->data);
             } else {
-                $item = $this->_d[$index];
-                array_splice($this->_d, $index, 1);
+                $item = $this->data[$index];
+                array_splice($this->data, $index, 1);
                 return $item;
             }
         } else {
@@ -180,7 +181,7 @@ class ItemList implements \IteratorAggregate, \Countable
      */
     public function clear()
     {
-        $this->_d = array();
+        $this->data = array();
         $this->_c = 0;
 
         //for ($i = $this->_c - 1; $i >= 0; -- $i) {
@@ -203,7 +204,7 @@ class ItemList implements \IteratorAggregate, \Countable
      */
     public function indexOf($item, $strict = true)
     {
-        if (($index = array_search($item, $this->_d, $strict)) !== false) {
+        if (($index = array_search($item, $this->data, $strict)) !== false) {
             return $index;
         } else {
             return -1;
@@ -215,7 +216,7 @@ class ItemList implements \IteratorAggregate, \Countable
      */
     public function toArray()
     {
-        return $this->_d;
+        return $this->data;
     }
 
     /**
