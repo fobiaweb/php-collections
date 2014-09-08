@@ -264,6 +264,7 @@ class ItemList implements \IteratorAggregate, \Countable
      * Обходит весь масив, передавая функции элемент, его индекс и дополнительные параметры.
      *
      * В функцию передаються [елемент, его индекс, дополнительный параметр]
+     * Если элемент необходимо изменить, функция должна принимать сылочную переменую.
      * Если функция возвращает false, обход останавливаеться.
      *
      * @param callback $callback
@@ -273,9 +274,8 @@ class ItemList implements \IteratorAggregate, \Countable
     public function each($callback, $args = null)
     {
         is_callable($callback) or trigger_error("CORE: Параметр не является функцией обратного вызова.", E_USER_ERROR);
-
-        foreach ($this->data as $index => $item) {
-            if ($callback(&$item, $index, $args) === false) {
+        for ($index = 0; $index < $this->_c; $index ++ ) {
+            if ($callback($this->data[$index], $index, $args) === false) {
                 break;
             }
         }

@@ -285,4 +285,54 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(self::DEFAULT_COUNT + 5 + 1, $this->object);
         //$this->assertSame($arr, $this->object->itemAt($this->object->getCount() - 1));
     }
+
+    /**
+     * @covers Fobia\Collections\ItemList::each
+     */
+    public function testEachFull()
+    {
+        $this->object->each(function(&$item, $index) {
+            $item['type'] = 'each_' . $index;
+        });
+
+        $item = $this->object->itemAt(0);
+        $this->assertEquals('each_0', $item['type']);
+
+        $lastIndex = $this->object->count() - 1;
+        $item = $this->object->itemAt($lastIndex);
+        $this->assertEquals('each_' . $lastIndex, $item['type']);
+    }
+
+    /**
+     * @covers Fobia\Collections\ItemList::each
+     */
+    public function testEachReturnFallse()
+    {
+        $this->object->each(function(&$item, $index) {
+            $item['type'] = 'each_' . $index;
+            if ($index >= 5) {
+                return false;
+            }
+        });
+
+        $item = $this->object->itemAt(5);
+        $this->assertEquals('each_5', $item['type']);
+
+        $item = $this->object->itemAt(6);
+        $this->assertEquals('new', $item['type']);
+    }
+    
+    /**
+     * @covers Fobia\Collections\ItemList::each
+     */
+    public function testEachWithArg()
+    {
+        $this->object->each(function(&$item, $index, $arg) {
+            $item['type'] = $arg . '_' . $index;
+        }, 'arg');
+
+        $item = $this->object->itemAt(0);
+        $this->assertEquals('arg_0', $item['type']);
+    }
+    
 }
