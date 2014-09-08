@@ -335,4 +335,17 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('arg_0', $item['type']);
     }
     
+    /**
+     * @covers Fobia\Collections\ItemList::set
+     */
+    public function testSet()
+    {
+        $this->object->set('type', 'set')
+                ->set('name', 'set');
+
+        $item = $this->object->itemAt(0);
+        $this->assertEquals('set', $item['type']);
+        $this->assertEquals('set', $item['name']);
+    }
+    
 }

@@ -52,6 +52,14 @@ class ItemList implements \IteratorAggregate, \Countable
         $this->copyFrom($data);
     }
 
+    public function set($name, $value)
+    {
+        for ($index = 0; $index < $this->_c; $index ++ ) {
+            $this->data[$index][$name] = $value;
+        }
+        return $this;
+    }
+
     /**
      * Возвращает итератор для обхода элементов в списке.
      * Этот метод требуется интерфейсом IteratorAggregate.
