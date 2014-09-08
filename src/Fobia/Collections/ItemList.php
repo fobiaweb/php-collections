@@ -258,4 +258,54 @@ class ItemList implements \IteratorAggregate, \Countable
             throw new \Exception("Список данных должен быть массивом или объектом, реализующим Traversable.");
         }
     }
+
+
+    /**
+     * Обходит весь масив, передавая функции элемент, его индекс и дополнительные параметры.
+     *
+     * В функцию передаються [елемент, его индекс, дополнительный параметр]
+     * Если функция возвращает false, обход останавливаеться.
+     *
+     * @param callback $callback
+     * @param mixed    $args
+     * @return self
+     */
+    public function each($callback, $args = null)
+    {
+        is_callable($callback) or trigger_error("CORE: Параметр не является функцией обратного вызова.", E_USER_ERROR);
+
+        foreach ($this->data as $index => $item) {
+            if ($callback(&$item, $index, $args) === false) {
+                break;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Отфильтровать список используя функции обратного вызова.
+     *
+     * В Функцию передаються элемент и его индекс.
+     * Все объекты на которые функция вернула false, исключаються.
+     *
+     * @param callable $callback
+     * @return self
+     */
+    public function filter($callback)
+    {
+        is_callable($callback) or  trigger_error("CORE: Параметр не является функцией обратного вызова.", E_USER_ERROR);
+
+        $list = array();
+        foreach ($this->data as $index => $item) {
+            if ($callback($item, $index)){
+                $list[] = $item;
+            }
+        }
+
+        $this->data = $list;
+        $this->_c = count($list);
+
+        return $this;
+    }
 }
