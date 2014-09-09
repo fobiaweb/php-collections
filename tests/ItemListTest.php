@@ -371,5 +371,58 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('set', $item['type']);
         $this->assertEquals('set', $item['name']);
     }
-    
+
+    /**
+     * @covers Fobia\Collections\ItemList::get
+     */
+    public function testGetKey()
+    {
+        for ($i = 0; $i < self::DEFAULT_COUNT; $i++ ) {
+            $arr[] = $i;
+        }
+        $this->assertSame($arr, $this->object->get('id'));
+    }
+
+    /**
+     * @covers Fobia\Collections\ItemList::get
+     */
+    public function testGetKeys()
+    {
+        for ($i = 0; $i < self::DEFAULT_COUNT; $i++ ) {
+            $arr[] = array(
+                'id' => $i,
+                'name' => 'name_' . $i
+            );
+        }
+        $this->assertSame($arr, $this->object->get(array('id', 'name')));
+    }
+
+    /**
+     * @covers Fobia\Collections\ItemList::get
+     */
+    public function testGetNameKey()
+    {
+        for ($i = 0; $i < self::DEFAULT_COUNT; $i++ ) {
+            $k = 'name_' . $i;
+            $arr[$k] = $k;
+        }
+        $this->assertSame($arr, $this->object->get('name', 'name'));
+    } /* */
+
+
+    /**
+     * @covers Fobia\Collections\ItemList::get
+     */
+    public function testGetNameKeys()
+    {
+        for ($i = 0; $i < self::DEFAULT_COUNT; $i++ ) {
+            $k = 'name_' . $i;
+            $arr[$k] = array(
+                'id' => $i,
+                'name' => 'name_' . $i
+            );
+        }
+        $this->assertSame($arr, $this->object->get('name', array('id', 'name')));
+    } /*  */
+
 }

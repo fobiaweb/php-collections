@@ -101,11 +101,11 @@ class ItemList implements \IteratorAggregate, \Countable
         // список масивов полей
         if (is_array($name)) {
             foreach ($this->data as $item) {
-                $item = array();
+                $data_item = array();
                 foreach ($name as $key) {
-                    $item[$key] = $this->_itemGet($item, $key);// $item->$key;
+                    $data_item[$key] = $this->_itemGet($item, $key);// $item->$key;
                 }
-                $data[] = $item;
+                $data[] = $data_item;
             }
             return $data;
         }
@@ -121,17 +121,17 @@ class ItemList implements \IteratorAggregate, \Countable
         // ассоциативный массив полей по ключу
         if (is_array($fields)) {
             foreach ($this->data as $item) {
-                $item = array();
+                $data_item= array();
                 foreach ($fields as $key) {
-                    $item[$key] = $this->_itemGet($item, $key); //$item->$key;
+                    $data_item[$key] = $this->_itemGet($item, $key); //$item->$key;
                 }
-                $data[$item->$name] = $item;
+                $data[$this->_itemGet($item, $name)] = $data_item;
             }
             return $data;
         } else {
             // ассоциативный массив полея
             foreach ($this->data as $item) {
-                $data[$item->$name] = $this->_itemGet($item, $fields);// $item->$fields;
+                $data[$this->_itemGet($item, $name)] = $this->_itemGet($item, $fields);// $item->$fields;
             }
             return $data;
         }
