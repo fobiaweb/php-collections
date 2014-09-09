@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains CTypedList class.
+ * This file contains TypedList class.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
@@ -11,13 +11,10 @@
 namespace Fobia\Collections;
 
 /**
- * CTypedList represents a list whose items are of the certain type.
- *
- * CTypedList extends {@link CList} by making sure that the elements to be
- * added to the list is of certain class type.
+ * TypedList represents a list whose items are of the certain type.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @package system.collections
+ * @package Fobia.Collections
  * @since 1.0
  */
 class TypedList extends ItemList
@@ -42,13 +39,13 @@ class TypedList extends ItemList
 	 * @throws CException If the index specified exceeds the bound,
 	 * the list is read-only or the element is not of the expected type.
 	 */
-	public function insertAt($index,$item)
+	public function insertAt($index, $item)
 	{
 		if($item instanceof $this->_type) {
 			parent::insertAt($index,$item);
 		}
 		else {
-			throw new \Exception("CTypedList<{$type}> can only hold objects of {$type} class.");
+			throw new \Exception("TypedList<{$type}> can only hold objects of {$type} class.");
 		}
 	}
 }

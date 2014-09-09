@@ -232,9 +232,33 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
             'type' => 'add'
         );
         $index = $this->object->add($item_new);
+        $this->assertSame($index, $this->object->indexOf($item_new));
+    }
 
-        $item = $this->object->itemAt($index);
-        $this->assertSame($item_new, $item);
+    /**
+     * @covers Fobia\Collections\ItemList::indexOf
+     * @todo   Implement testIndexOf().
+     */
+    public function testIndexOfOrigin()
+    {
+        $item = $this->object->itemAt(0);
+        $index = $this->object->indexOf($item);
+        $this->assertEquals(0, $index);
+    }
+    
+    /**
+     * @covers Fobia\Collections\ItemList::indexOf
+     * @todo   Implement testIndexOf().
+     */
+    public function testIndexOfOther()
+    {
+        $item = $this->object->itemAt(0);
+        $item_clone = array();
+        foreach ($item as $key => $value) {
+            $item_clone[$key] = $value;
+        }
+
+        $this->assertEquals(0, $this->object->indexOf($item_clone));
     }
 
     /**

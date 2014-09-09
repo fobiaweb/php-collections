@@ -11,7 +11,7 @@
 namespace Fobia\Collections;
 
 /**
- * CListIterator implements an iterator for {@link ItemList}.
+ * ListIterator implements an iterator for {@link \Fobia\Collections\ItemList}.
  *
  * Это позволяет ItemList вернуть новый итератор для обхода элементов в списке.
  *
