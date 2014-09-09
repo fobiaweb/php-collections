@@ -182,7 +182,18 @@ class ItemList implements \IteratorAggregate, \Countable
             $item->$key = $value;
         }
     }
-
+    
+    protected function _itemIsset(&$item, $key)
+    {
+        if (is_array($item) || $item instanceof \ArrayAccess) {
+            return array_key_exists($key, $item);
+        } else {
+            if ( !is_object($item) ) {
+                throw new \Exception("Элемент списка должен быть массивом или объектом");
+            }
+            return property_exists($item, $key);
+        }
+    }
     /**
      * Возвращает итератор для обхода элементов в списке.
      * Этот метод требуется интерфейсом IteratorAggregate.
@@ -356,6 +367,7 @@ class ItemList implements \IteratorAggregate, \Countable
      * Примечание, существующие данные в списке будут удалены в первую очередь.
      *
      * @param mixed $data the data to be copied from, must be an array or object implementing Traversable
+     * @return self
      * @throws \Exception Если данные не является ни массивом, ни Traversable.
      */
     public function copyFrom($data)
@@ -370,6 +382,7 @@ class ItemList implements \IteratorAggregate, \Countable
         } elseif ($data !== null) {
             throw new \Exception("Список данных должен быть массивом или объектом, реализующим Traversable.");
         }
+        return $this;
     }
 
     /**
@@ -377,6 +390,7 @@ class ItemList implements \IteratorAggregate, \Countable
      * Новые данные будут добавлены в конец существующих данных.
      *
      * @param mixed $data the data to be merged with, must be an array or object implementing Traversable
+     * @return self
      * @throws \Exception Если данные не является ни массивом, ни итератор.
      */
     public function mergeWith($data)
@@ -388,6 +402,7 @@ class ItemList implements \IteratorAggregate, \Countable
         } elseif ($data !== null) {
             throw new \Exception("Список данных должен быть массивом или объектом, реализующим Traversable.");
         }
+        return $this;
     }
 
 
@@ -439,4 +454,62 @@ class ItemList implements \IteratorAggregate, \Countable
 
         return $this;
     }
+
+    /**
+     * Найти все элементы, параметр которых удовлетворяют услови.
+     *
+     * Возвращает новый объект
+     *
+     * <code>
+     * // Поиск объектов с существующим свойством
+     * $oc->find('Location');
+     *
+     * // Поиск объектов со свойством равным указаному значению
+     * $oc->find('Location', 'localhost/js');
+     *
+     * // Поиск объектов удавлетворяющие возврату функции
+     * $oc->find(function($obj, $key));
+     * </code>
+     *
+     * @param string|callable  $name   название свойства или функция обратного вызова.
+     *                                 в функцию передаеться [оъект, его индекс]
+     * @param mixed            $value  его значение, если $name строка
+     * @return Fobia\Collections\ItemList  колекция найденных объектов.
+     */
+    public function find($name, $value = null)
+    {
+        $data = array();
+
+        // Функция пользователя
+        if (!is_string($name) && is_callable($name)) {
+            $callback = $name;
+            foreach ($this->data as $key => $item) {
+                if ( $callback($item, $key) ){
+                    $data[] = $item;
+                }
+            }
+            return new self($data);
+        }
+
+        // Существавание свойства
+        if (func_num_args() == 1) {
+            foreach ($this->data as $item) {
+                if ($this->_itemIsset($item, $name)) {
+                    $data[] = $item;
+                }
+            }
+        }
+
+        // Сравнение свойства
+        if (func_num_args() > 1) {
+            foreach ($this->data as $item) {
+                if ($this->_itemGet($item, $name) == $value) {
+                    $data[] = $item;
+                }
+            }
+        }
+
+        return new self($data);
+    }
+
 }

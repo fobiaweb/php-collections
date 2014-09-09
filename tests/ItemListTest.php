@@ -425,4 +425,35 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($arr, $this->object->get('name', array('id', 'name')));
     } /*  */
 
+    /**
+     * @covers Fobia\Collections\ItemList::find
+     */
+    public function testFind()
+    {
+        // isset property
+        $this->assertCount(4, $this->object->find('param3'));
+        $this->assertCount(2, $this->object->find('param4'));
+
+        // eq
+        $this->assertCount(2, $this->object->find('group', 4));
+
+        // callback function
+        $cb = function($item) {
+            return ($item['group'] == 5);
+        };
+        $this->assertCount(2, $this->object->find($cb));
+    }
+
+    public function testFindEx()
+    {
+        // callback function
+        $cb = function($item) {
+            return ($item['id'] % 2);
+        };
+        $collection = $this->object
+                ->find($cb)
+                ->find('param3')
+                ->find('group', 5);
+        $this->assertCount(1, $collection);
+    }
 }
