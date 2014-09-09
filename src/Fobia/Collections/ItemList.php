@@ -52,12 +52,135 @@ class ItemList implements \IteratorAggregate, \Countable
         $this->copyFrom($data);
     }
 
+    /**
+     * Установить свойства в новое значение.
+     *
+     * @param string   $name    имя свойства
+     * @param mixed    $value   устанавливаемое значение
+     * @return self
+     */
     public function set($name, $value)
     {
         for ($index = 0; $index < $this->_c; $index ++ ) {
-            $this->data[$index][$name] = $value;
+            $this->_itemSet($this->data[$index], $name, $value);
+            // $this->data[$index][$name] = $value;
         }
         return $this;
+    }
+
+    /**
+     * Выбрать значения свойсвта из списка.
+     *
+     * Если второй аргумент не передан, то возвращаеться список значений свойств
+     * $name либо список масивов со свойствами.
+     * Если передан второй параметр возвращаеться ассоциативный массив, сформированый
+     * аналогично первому варианту, а ключи являються значения имени свойства по первому
+     * аргументу. (Дубликаты замещаються)
+     *
+     * <code>
+     * // Вернет список определеного поля
+     * $oc->get('login');
+     *
+     * // Вернет список масивов полей
+     * $oc->get(array('login', 'password'))
+     *
+     * // Вернет ассоциативный массив, где ключом являеться первый аргумент,
+     * // а значения поля объектов, сформированых из второго аргумента
+     * $oc->get('key', 'login');
+     * $oc->get('key', array('login', 'password');
+     * </code>
+     *
+     * @param string|array $name
+     * @param string|array $fields
+     * @return array
+     */
+    public function get($name, $fields = null)
+    {
+        $data = array();
+
+        // список масивов полей
+        if (is_array($name)) {
+            foreach ($this->data as $item) {
+                $item = array();
+                foreach ($name as $key) {
+                    $item[$key] = $this->_itemGet($item, $key);// $item->$key;
+                }
+                $data[] = $item;
+            }
+            return $data;
+        }
+
+        // список определеного поля
+        if ($fields === null) {
+            foreach ($this->data as $item) {
+                $data[] = $this->_itemGet($item, $name); //$item->$name;
+            }
+            return $data;
+        }
+
+        // ассоциативный массив полей по ключу
+        if (is_array($fields)) {
+            foreach ($this->data as $item) {
+                $item = array();
+                foreach ($fields as $key) {
+                    $item[$key] = $this->_itemGet($item, $key); //$item->$key;
+                }
+                $data[$item->$name] = $item;
+            }
+            return $data;
+        } else {
+            // ассоциативный массив полея
+            foreach ($this->data as $item) {
+                $data[$item->$name] = $this->_itemGet($item, $fields);// $item->$fields;
+            }
+            return $data;
+        }
+    }
+
+    /**
+     * Возвращает свойство элемента.
+     *
+     * Если масив или объект реализующий масив, то $item[$key]
+     * Если объект, то $item->$key
+     *
+     * @param mixed $item
+     * @param string $key
+     * @return mixed
+     * @throws \Exception
+     */
+    protected function _itemGet(&$item, $key)
+    {
+        if (is_array($item) || $item instanceof \ArrayAccess) {
+            return @$item[$key];
+        }
+        if (!is_object($item)) {
+            throw new \Exception("Элемент списка должен быть массивом или объектом");
+        }
+        return @$item->$key;
+    }
+
+    /**
+     * Устанавливает свойство элемента.
+     *
+     * Если масив или объект реализующий масив, то $item[$key]
+     * Если объект, то $item->$key
+     *
+     * @param mixed $item
+     * @param string $key
+     * @param mixed $value
+     * @return void 
+     * @throws \Exception
+     */
+    protected function _itemSet(&$item, $key, $value)
+    {
+        if (is_array($item) || $item instanceof \ArrayAccess) {
+            $item[$key] = $value;
+        } else {
+            if ( !is_object($item) ) {
+                throw new \Exception("Элемент списка должен быть массивом или объектом");
+            }
+            $item->$key = $value;
+        }
     }
 
     /**
