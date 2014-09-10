@@ -6,12 +6,17 @@
  * @link http://www.yiiframework.com/
  * @copyright 2008-2013 Yii Software LLC
  * @license http://www.yiiframework.com/license/
+ * 
+ * Модификацияя класса ListIterator фраемфорка yiif
+ * 
+ * @author Dmitriy Tyurin <fobia3d@gmail.com>
  */
 
 namespace Fobia\Collections;
 
 /**
- * ListIterator implements an iterator for {@link \Fobia\Collections\ItemList}.
+ * Реализует итератор для {@link \Fobia\Collections\ItemList}.
+ * Избегает повторных копий обходного масива за счет передачи по сылки.
  *
  * Это позволяет ItemList вернуть новый итератор для обхода элементов в списке.
  *

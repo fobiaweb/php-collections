@@ -243,6 +243,23 @@ class ItemList implements \IteratorAggregate, \Countable
     }
 
     /**
+     * Возвращает элемент с указанным индексом, или какого либо конца.
+     *
+     * @param int   $index индекс
+     * @return mixed 
+     */
+    public function eq($index = 0)
+    {
+        $index = (int) $index;
+        if ($index > ($this->_c - 1)) {
+            $index = $this->_c - 1;
+        } else if ($index < 0) {
+            $index = 0;
+        }
+        return $this->data[$index];
+    }
+
+    /**
      * Добавляет элемент в конец списка.
      *
      * @param mixed $item new item

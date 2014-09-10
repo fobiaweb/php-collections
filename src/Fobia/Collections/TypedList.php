@@ -11,18 +11,17 @@
 namespace Fobia\Collections;
 
 /**
- * TypedList represents a list whose items are of the certain type.
+ * Представляет собой список, элементы которого состоят из определенного типа.
  *
- * @author Qiang Xue <qiang.xue@gmail.com>
  * @package Fobia.Collections
- * @since 1.0
  */
 class TypedList extends ItemList
 {
 	private $_type;
 
 	/**
-	 * Constructor.
+	 * Конструктор.
+     *
 	 * @param string $type class type
 	 */
 	public function __construct($type)
@@ -31,17 +30,16 @@ class TypedList extends ItemList
 	}
 
 	/**
-	 * Inserts an item at the specified position.
-	 * This method overrides the parent implementation by
-	 * checking the item to be inserted is of certain type.
-	 * @param integer $index the specified position.
-	 * @param mixed $item new item
-	 * @throws CException If the index specified exceeds the bound,
-	 * the list is read-only or the element is not of the expected type.
+     * Вставляет элемент в указанноую позицию.
+     * Этот метод перекрывает реализацию родитель, для проверки определенного типа.
+     *
+	 * @param int   $index   position
+	 * @param mixed $item    new item
+	 * @throws \Exception Если указанный индекс превышает предел, список доступен только для чтения или элемент не ожидаемого типа.
 	 */
 	public function insertAt($index, $item)
 	{
-		if($item instanceof $this->_type) {
+		if ($item instanceof $this->_type) {
 			parent::insertAt($index,$item);
 		}
 		else {

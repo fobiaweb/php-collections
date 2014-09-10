@@ -163,6 +163,29 @@ class ItemListTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers Fobia\Collections\ItemList::eq
+     */
+    public function testEq()
+    {
+        $this->assertEquals(
+                $this->object->eq(0),
+                $this->object->eq( -5 )
+        );
+        $this->assertEquals(
+                $this->object->eq(0),
+                $this->object->eq( 'none' )
+        );
+        $this->assertEquals(
+                $this->object->eq($this->object->count() - 1),
+                $this->object->eq($this->object->count() + 5 )
+        );
+        $this->assertEquals(
+                $this->object->eq(5),
+                $this->object->itemAt(5)
+        );
+    }
+
+    /**
      * @covers Fobia\Collections\ItemList::remove
      * @todo   Implement testRemove().
      */
